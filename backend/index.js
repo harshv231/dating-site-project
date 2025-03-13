@@ -43,9 +43,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("send-message", ({ room, message, username }) => {
-    const messageData = {  message, username }; //here i added the username and message
-    io.to(room).emit("received-message", messageData); //here i have done message to messageData
-  });
+    const messageData = {  message, username }; 
+    io.to(room).emit("received-message", messageData); 
 
   socket.on("disconnect", () => {
     console.log("User disconnected");
@@ -213,48 +212,6 @@ app.get("/gendered-users", async (req, res) => {
 
 
 
-// app.get("/gendered-users", async (req, res) => {
-//   const client = new MongoClient(uri);
-//   const { gender, userId } = req.query;
-
-//   try {
-//     await client.connect();
-//     const database = client.db("app-data");
-//     const users = database.collection("users");
-
-//     // Get the current user's data
-//     const currentUser = await users.findOne({ user_id: userId });
-
-//     if (!currentUser) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-
-//     // Combine matched and rejected user IDs into an exclusion list
-//     const excludedUserIds = [
-//       ...(currentUser.matches?.map((match) => match.user_id) || []),
-//       ...(currentUser.rejected?.map((reject) => reject.user_id) || []),
-//       userId, // Exclude the current user themselves
-//     ];
-
-//     // Query to find gendered users excluding matches and rejected
-//     const query = {
-//       gender_identity: { $eq: gender },
-//       user_id: { $nin: excludedUserIds }, // Exclude already matched/rejected users
-//     };
-
-//     const foundUsers = await users.find(query).toArray();
-//     res.json(foundUsers);
-//   } catch (error) {
-//     console.error("Error fetching gendered users:", error);
-//     res.status(500).json({ message: "Server error" });
-//   } finally {
-//     await client.close();
-//   }
-// });
-
-
-
-
 app.put("/user", async (req, res) => {
   const client = new MongoClient(uri);
   const formData = req.body.formData;
@@ -289,14 +246,13 @@ app.put("/user", async (req, res) => {
     await client.close();
   }
 });
-// here we go with rejected list 
-// Add a rejected user
+
 app.put("/add-rejected", async (req, res) => {
-  console.log("Add-rejected route hit!"); // <-- Check if request reaches here
+  console.log("Add-rejected route hit!"); 
   console.log("Request body:", req.body);
   const client = new MongoClient(uri);
   const { userId, rejectedUserId } = req.body;
-  //here i added
+
   if (!userId || !rejectedUserId) {
     console.log("Missing userId or rejectedUserId");
     return res.status(400).send("Missing userId or rejectedUserId");
@@ -314,15 +270,13 @@ app.put("/add-rejected", async (req, res) => {
       await users.updateOne(query, { $set: { rejected: [] } });
     }
     const updateDocument = {
-      //here i added
       $push: { rejected: rejectedUserId },
     };
-    //here i added
+    
 
     const result = await users.updateOne(query, updateDocument);
     console.log("MongoDB update result:", result);
 
-    //here i added
     if (result.modifiedCount === 0) {
       console.log("No user found with this userId");
       return res.status(404).send("User not found");
