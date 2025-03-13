@@ -72,15 +72,13 @@ const Dashboard = () => {
   
   //here we go
   const updateRejected = async (rejectedUserId) => {
-    console.log("attempting to reject user:",rejectedUserId);
     
     try {
       const response = await axios.put("http://localhost:8000/add-rejected", {
         userId: user.user_id,
         rejectedUserId,
       });
-      console.log("Response from server:", response.data);
-      getUser();// again i added here // Check what server sends back
+      getUser();
       const rejectedUser = genderedUsers.find(user => user.user_id === rejectedUserId);
       if(rejectedUser){
         setRejectedUsers(prev => [...prev, rejectedUser]);
@@ -89,14 +87,10 @@ const Dashboard = () => {
       }
  
 
-     // getUser(); // Refresh user data after rejection
     } catch (err) {
-//here i added
 console.log("Error rejecting user:", err.response?.data || err.message);
-      //console.log(err);
     }
   };
-  //here we stop   
 
   const swiped = (direction, swipedUserId) => {
     console.log("Swiped", direction, "on user ID:", swipedUserId);
@@ -118,23 +112,9 @@ console.log("Error rejecting user:", err.response?.data || err.message);
     .map(({ user_id }) => user_id)
     .concat(userId);
 
-  
-  // const matchedUserIds = user?.matches.map(({ user_id }) => user_id);
-  // const rejectedUserIds = user?.rejected.map(({ user_id }) => user_id);
-
   const filteredGenderedUsers = genderedUsers?.filter(
     (genderedUser) => !matchedUserIds.includes(genderedUser.user_id)
   );
-
-  // const filteredGenderedUsers = genderedUsers?.filter(
-  //   (genderedUser) =>
-  //     !matchedUserIds.includes(genderedUser.user_id) &&
-  //     !rejectedUserIds.includes(genderedUser.user_id)
-  // );
-
-  
-
- 
 
 
   return (
@@ -147,24 +127,7 @@ console.log("Error rejecting user:", err.response?.data || err.message);
               Community
             </Link>
             <div className="card-container">
-              {/* {filteredGenderedUsers &&
-                filteredGenderedUsers.map((genderedUser) => (
-                  <TinderCard
-                    className="swipe"
-                    key={genderedUser.user_id}
-                    onSwipe={(dir) => swiped(dir, genderedUser.user_id)}
-                    onCardLeftScreen={() => outOfFrame(genderedUser.first_name)}
-                  >
-                    <div
-                      style={{
-                        backgroundImage: "url(" + genderedUser.url + ")",
-                      }}
-                      className="card"
-                    >
-                      <h3>{genderedUser.first_name}</h3>
-                    </div>
-                  </TinderCard>
-                ))} */}
+             
                 {filteredGenderedUsers?.length > 0 ? (
   filteredGenderedUsers.map((genderedUser) => (
     <TinderCard
